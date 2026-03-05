@@ -8,16 +8,16 @@
 import UIKit
 
 final class MainViewModel {
-    var mainViewBounds: CGRect?
-    var xCenter: NSLayoutConstraint?
-    var yCenter: NSLayoutConstraint?
+    var mainViewBounds: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
+//    var xCenter: NSLayoutConstraint?
+//    var yCenter: NSLayoutConstraint?
     let circleViewRadius: CGFloat = 25
     weak var delegate: MainViewModelDelegate?
 
     func moveCircle(direction: ArrowName, xValueConstant: CGFloat, yValueConstant: CGFloat) {
         print("direction:", direction)
 //        print("mainViewBounds", mainViewBounds)
-        guard let mainViewBounds else {return}
+//        guard let mainViewBounds else {return}
 //        guard let mainViewBounds, let xCenter = delegate?.xCenter, let yCenter = delegate?.yCenter else {return}
 //        print("mainViewBounds", mainViewBounds)
         let halfHeight = mainViewBounds.height / 2

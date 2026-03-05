@@ -22,20 +22,12 @@ enum ArrowName: String {
     case right = "arrowshape.right"
 }
 
-final class MainViewController: UIViewController, MainViewModelDelegate {
-    func updateX(xValue: CGFloat) {
-        xCenter?.constant = xValue
-    }
-    
-    func updateY(yValue: CGFloat) {
-        yCenter?.constant = yValue
-    }
-    
+final class MainViewController: UIViewController {
 
     // MARK: - Properties
     private let mainVM = MainViewModel()
-    var xCenter: NSLayoutConstraint?
-    var yCenter: NSLayoutConstraint?
+    private var xCenter: NSLayoutConstraint?
+    private var yCenter: NSLayoutConstraint?
 //    private let circleViewRadius: CGFloat = 25
 
     // MARK: - Subviews
@@ -182,9 +174,15 @@ final class MainViewController: UIViewController, MainViewModelDelegate {
     }
 }
 
-//extension MainViewController: MainViewModelDelegate {
-//
-//}
+extension MainViewController: MainViewModelDelegate {
+    func updateX(xValue: CGFloat) {
+        xCenter?.constant = xValue
+    }
+
+    func updateY(yValue: CGFloat) {
+        yCenter?.constant = yValue
+    }
+}
 
 #Preview {
     MainViewController()

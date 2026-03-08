@@ -94,7 +94,6 @@ final class MainViewController: UIViewController {
     // MARK: - Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         setupViewProperties()
         setupSubviews()
         setupConstraints()
@@ -127,7 +126,7 @@ final class MainViewController: UIViewController {
             circleView.heightAnchor.constraint(equalToConstant: 50),
             circleView.widthAnchor.constraint(equalToConstant: 50),
             mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            mainStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10)
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 

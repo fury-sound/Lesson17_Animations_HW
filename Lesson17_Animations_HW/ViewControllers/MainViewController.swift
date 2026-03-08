@@ -8,11 +8,10 @@
 import UIKit
 
 protocol MainViewModelDelegate: AnyObject {
-//    func moveCircle(direction: ArrowName)
-//    var xCenter: NSLayoutConstraint? { get }
-//    var yCenter: NSLayoutConstraint? { get }
     func updateX(xValue: CGFloat)
     func updateY(yValue: CGFloat)
+    func setBorder()
+    func unsetBorder()
 }
 
 enum ArrowName: String {
@@ -28,29 +27,32 @@ final class MainViewController: UIViewController {
     private let mainVM = MainViewModel()
     private var xCenter: NSLayoutConstraint?
     private var yCenter: NSLayoutConstraint?
-//    private let circleViewRadius: CGFloat = 25
 
     // MARK: - Subviews
     private lazy var buttonUp: CircleButton = {
         let button = CircleButton(frame: .zero, .up)
+        button.addTarget(self, action: #selector(didButtonTouchDown), for: .touchDown)
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()
 
     private lazy var buttonDown: CircleButton = {
         let button = CircleButton(frame: .zero, .down)
+        button.addTarget(self, action: #selector(didButtonTouchDown), for: .touchDown)
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()
 
     private lazy var buttonLeft: CircleButton = {
         let button = CircleButton(frame: .zero, .left)
+        button.addTarget(self, action: #selector(didButtonTouchDown), for: .touchDown)
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()
 
     private lazy var buttonRight: CircleButton = {
         let button = CircleButton(frame: .zero, .right)
+        button.addTarget(self, action: #selector(didButtonTouchDown), for: .touchDown)
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()
@@ -83,14 +85,11 @@ final class MainViewController: UIViewController {
 
     private lazy var circleView: UIView = {
         let circle = UIView()
-//        let circleSize = CGSize(width: 50, height: 50)
         circle.translatesAutoresizingMaskIntoConstraints = false
-//        circle.frame.size = circleSize
         circle.layer.cornerRadius = mainVM.circleViewRadius
         circle.backgroundColor = .red
         return circle
     }()
-
 
     // MARK: - Lifecycles
     override func viewDidLoad() {
@@ -132,42 +131,16 @@ final class MainViewController: UIViewController {
         ])
     }
 
-//    private func moving(direction: ArrowName) {
-//        let mainViewBounds = mainView.bounds
-//        let halfHeight = mainView.bounds.height / 2
-//        let halfWidth = mainView.bounds.width / 2
-//        guard let xCenter, let yCenter else { return }
-//        let minX = -halfWidth + circleViewRadius
-//        let maxX = halfWidth - circleViewRadius
-//        let minY = -halfHeight + circleViewRadius
-//        let maxY = halfHeight - circleViewRadius
-//        switch direction {
-//            case .up:
-//                let newY = yCenter.constant - 50
-//                yCenter.constant = max(minY, newY)
-//            case .down:
-//                let newY = yCenter.constant + 50
-//                yCenter.constant = min(maxY, newY)
-//            case .left:
-//                let newX = xCenter.constant - 50
-//                xCenter.constant = max(minX, newX)
-//            case .right:
-//                let newX = xCenter.constant + 50
-//                xCenter.constant = min(maxX, newX)
-//        }
-
-//        UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseInOut]) {
-//            self.mainView.layoutIfNeeded()
-//        }
-//    }
+    @objc private func didButtonTouchDown(_ sender: CircleButton) {
+        sender.setButtonColor(for: .highlighted)
+    }
 
     @objc private func didTapButton(_ sender: CircleButton) {
         mainVM.mainViewBounds = mainView.bounds
+        sender.setButtonColor(for: .normal)
         guard let xCenter, let yCenter else { return }
         mainVM.moveCircle(direction: sender.imageName, xValueConstant: xCenter.constant, yValueConstant: yCenter.constant)
-//        moving(direction: sender.imageName)
-//        xCenter  = mainVM.xCenter
-//        yCenter = mainVM.yCenter
+
         UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseInOut]) {
             self.mainView.layoutIfNeeded()
         }
@@ -181,6 +154,29 @@ extension MainViewController: MainViewModelDelegate {
 
     func updateY(yValue: CGFloat) {
         yCenter?.constant = yValue
+    }
+
+    func setBorder() {
+        let groupAnimation = CAAnimationGroup()
+        groupAnimation.duration = 0.7
+        groupAnimation.autoreverses = true
+        groupAnimation.repeatCount = .infinity
+
+        let colorAnimation = CABasicAnimation(keyPath: "borderColor")
+        colorAnimation.fromValue = UIColor.systemOrange.withAlphaComponent(0.2).cgColor
+        colorAnimation.toValue = UIColor.systemOrange.withAlphaComponent(1.0).cgColor
+
+        let widthAnimation = CABasicAnimation(keyPath: "borderWidth")
+        widthAnimation.fromValue = 1.0
+        widthAnimation.toValue = 5
+
+        groupAnimation.animations = [colorAnimation, widthAnimation]
+
+        mainView.layer.add(groupAnimation, forKey: "pulsingBorder")
+    }
+
+    func unsetBorder() {
+        mainView.layer.removeAllAnimations()
     }
 }
 
